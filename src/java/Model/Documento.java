@@ -87,6 +87,16 @@ public class Documento {
 	public boolean isDomain(String domain){
 		return centroide.isDomain(domain);
 	}
-	
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Integer){
+            return obj.equals(this.codigo);
+        }else if(obj instanceof Documento) {
+            return (this.codigo == ((Documento)obj).getCodigo());
+        }else{
+            return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
+        }
+    }       
 	
 }

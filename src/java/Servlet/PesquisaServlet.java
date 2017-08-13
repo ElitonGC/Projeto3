@@ -6,6 +6,7 @@
 
 package Servlet;
 
+import Control.Busca;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -31,12 +32,18 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns = {"/PesquisaServlet"})
 public class PesquisaServlet extends HttpServlet {
     
+    private Busca busca;
     //private Connection conn;
     //private Statement stmt;
     
-    /*@Override
+    @Override
     public void init(ServletConfig config) throws ServletException {
-        try {            
+        busca = new Busca();
+        Thread thread = new Thread(busca);
+        thread.start();
+        
+        
+        /*try {            
             String driver = "org.hsqldb.jdbcDriver";                                
             String url = "jdbc:hsqldb:hsql"+"://10.65.215.32/xdb";
             String user = "sa";
@@ -47,8 +54,8 @@ public class PesquisaServlet extends HttpServlet {
             stmt = conn.createStatement();
         } catch (Exception e) {
             throw new ServletException(e);
-        }
-    }*/
+        }*/
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,7 +69,7 @@ public class PesquisaServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException{
         response.setContentType("text/html;charset=UTF-8");
         
-        
+        busca.getLinksToSearch();
         /*try (PrintWriter out = response.getWriter()) {
             try {
                 ResultSet rs = stmt.executeQuery("select * from Users where LOGIN ='"+request.getParameter("login")+"'");

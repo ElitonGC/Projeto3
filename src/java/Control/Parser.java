@@ -11,15 +11,14 @@ import java.util.Queue;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import Model.Centroide;
+import Model.Seed;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-
-import models.Centroide;
-import models.Seed;
-import xml.XML;
 
 public class Parser implements Runnable {
 

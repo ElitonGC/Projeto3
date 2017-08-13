@@ -9,10 +9,8 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import models.Documento;
-import models.Seed;
-import parser.Parser;
-import xml.XML;
+import Model.Documento;
+import Model.Seed;
 
 public class Robo {
 
