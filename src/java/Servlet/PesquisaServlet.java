@@ -38,6 +38,7 @@ public class PesquisaServlet extends HttpServlet {
         
     @Override
     public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         
         busca = new Busca();
         Thread thread = new Thread(busca);
