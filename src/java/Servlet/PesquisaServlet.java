@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
@@ -69,7 +70,7 @@ public class PesquisaServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException{
         response.setContentType("text/html;charset=UTF-8");
         
-        busca.getLinksToSearch();
+        busca.getLinksToSearch(new ArrayList<String>()); 
         /*try (PrintWriter out = response.getWriter()) {
             try {
                 ResultSet rs = stmt.executeQuery("select * from Users where LOGIN ='"+request.getParameter("login")+"'");
