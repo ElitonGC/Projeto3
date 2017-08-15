@@ -29,20 +29,20 @@ import javax.servlet.http.HttpServletResponse;
  * @author aluno
  */
 
-
 @WebServlet(urlPatterns = {"/PesquisaServlet"})
 public class PesquisaServlet extends HttpServlet {
     
     private Busca busca;
     //private Connection conn;
     //private Statement stmt;
-    
+        
     @Override
     public void init(ServletConfig config) throws ServletException {
+        
         busca = new Busca();
         Thread thread = new Thread(busca);
         thread.start();
-        
+    
         
         /*try {            
             String driver = "org.hsqldb.jdbcDriver";                                

@@ -16,7 +16,7 @@
             ${mensagem}
         </c:if>
         <form action="PesquisaServlet" method="GET">      
-            Pesquisa: <input type="text" name="login" /><br>
+            Pesquisa: <input type="text" name="Campos" /><br>
             <input type="submit" value="Pesquisar" />
         </form>                
     </body>
