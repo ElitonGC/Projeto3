@@ -1,18 +1,17 @@
-
 package Model;
 
 import java.io.Serializable;
 
-public class SearchBean implements Serializable{
+public class SearchBean implements Serializable {
 
     private String link;
     private String titulo;
     private String texto;
-    
-    public SearchBean(){
-        
+
+    public SearchBean() {
+
     }
-    
+
     public SearchBean(String link, String titulo, String texto) {
         this.link = link;
         this.titulo = titulo;
@@ -41,5 +40,5 @@ public class SearchBean implements Serializable{
 
     public void setTexto(String texto) {
         this.texto = texto;
-    }    
+    }
 }

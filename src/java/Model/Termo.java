@@ -1,33 +1,35 @@
 package Model;
 
-public class Termo {
-	
-	private String termo;
-	private int peso;
-	private int quantidade;
+import java.io.Serializable;
 
-	public String getTermo() {
-		return termo;
-	}
+public class Termo implements Serializable {
 
-	public void setTermo(String termo) {
-		this.termo = termo;
-	}
+    private String termo;
+    private int peso;
+    private int quantidade;
 
-	public int getPeso() {
-		return peso;
-	}
+    public String getTermo() {
+        return termo;
+    }
 
-	public void setPeso(int peso) {
-		this.peso = peso;
-	}
+    public void setTermo(String termo) {
+        this.termo = termo;
+    }
 
-	public int getQuantidade() {
-		return quantidade;
-	}
+    public int getPeso() {
+        return peso;
+    }
 
-	public void setQuantidade(int quantidade) {
-		this.quantidade = quantidade;
-	}
+    public void setPeso(int peso) {
+        this.peso = peso;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
 
 }

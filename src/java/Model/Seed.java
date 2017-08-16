@@ -1,37 +1,39 @@
 package Model;
 
-public class Seed {
+import java.io.Serializable;
 
-	private String url;
-	private boolean visited;
+public class Seed implements Serializable {
 
-	public Seed(String url, boolean visited) {
-		this.url = url;
-		this.visited = visited;
-	}
+    private String url;
+    private boolean visited;
 
-	public String getUrl() {
-		return url;
-	}
+    public Seed(String url, boolean visited) {
+        this.url = url;
+        this.visited = visited;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public boolean isVisited() {
-		return visited;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public void setVisited(boolean visited) {
-		this.visited = visited;
-	}
+    public boolean isVisited() {
+        return visited;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Seed) {
-			return ((Seed) obj).url.equals(this.url);
-		} else {
-			return super.equals(obj);
-		}
-	}
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Seed) {
+            return ((Seed) obj).url.equals(this.url);
+        } else {
+            return super.equals(obj);
+        }
+    }
 }
