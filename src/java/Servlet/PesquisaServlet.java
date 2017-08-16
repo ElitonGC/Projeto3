@@ -1,20 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Servlet;
 
-import Control.Busca;
+import Model.Documento;
+import Model.ItemListaInvertida;
+import Model.SearchBean;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /*import javax.servlet.ServletConfig;
@@ -28,36 +26,31 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author aluno
  */
+@WebServlet(urlPatterns = {"/PesquisaServlet"})
+public class PesquisaServlet extends HttpServlet {
 
-//@WebServlet(urlPatterns = {"/PesquisaServlet"})
-public class PesquisaServlet{ //extends HttpServlet {
-    
-    private Busca busca;
-    //private Connection conn;
-    //private Statement stmt;
-   /*     
+    private Map<String, List<ItemListaInvertida>> listaInvertida;
+    private List<Documento> docs;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        
-        busca = new Busca();
-        Thread thread = new Thread(busca);
-        thread.start();
-    
-        
-        /*try {            
-            String driver = "org.hsqldb.jdbcDriver";                                
-            String url = "jdbc:hsqldb:hsql"+"://10.65.215.32/xdb";
-            String user = "sa";
-            String passwd = "";
-            
-            Class.forName(driver);
-            conn = DriverManager.getConnection(url, user, passwd);
-            stmt = conn.createStatement();
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }*/
-    //}
+
+        ObjectInputStream in;
+        try {
+            in = new ObjectInputStream(new FileInputStream(new File("./listaInvertida.dat")));
+            listaInvertida = (HashMap<String, List<ItemListaInvertida>>) in.readObject();            
+            in.close();
+
+            in = new ObjectInputStream(new FileInputStream(new File("./docsBusca.dat")));
+            docs = (ArrayList<Documento>) in.readObject();
+            in.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,39 +61,35 @@ public class PesquisaServlet{ //extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    /*
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         
-        busca.getLinksToSearch(new ArrayList<String>()); 
-        /*try (PrintWriter out = response.getWriter()) {
-            try {
-                ResultSet rs = stmt.executeQuery("select * from Users where LOGIN ='"+request.getParameter("login")+"'");
-                
-                while(rs.next()){
-                    if (rs.getString("PASSWORD").equals(request.getParameter("password"))) {//cadastro com sucesso
-                        request.setAttribute("mensagem", "Login realizado com sucesso!");
-                        PersonBean person = new PersonBean(rs.getString("NAME"), rs.getString("LOGIN"), rs.getString("EMAIL")); 
-                        request.setAttribute("pessoa", person); 
-                        request.getRequestDispatcher("/Mensagem.jsp").forward(request, response);                
-                    }else{//login inexistente
-                        request.setAttribute("mensagem", "Senha incorreta!");
-                        request.getRequestDispatcher("/Login.jsp").forward(request, response);
-                    }
-                    
-                    return;
-                }
-                request.setAttribute("mensagem", "Usuário não Cadastrado!");
-                request.getRequestDispatcher("/Login.jsp").forward(request, response);
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ServletException ex) {
-                Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
+        try (PrintWriter out = response.getWriter()) {
+            String[] parts = request.getParameter("Campos").split(" ");
+            for(String ret : getLinksToSearch(parts)){
+                SearchBean result = new SearchBean(ret, ret, ret);
             }
             
-        }*/
-   // }
+            
+            /*while(rs.next()){
+            if (rs.getString("PASSWORD").equals(request.getParameter("password"))) {//cadastro com sucesso
+            request.setAttribute("mensagem", "Login realizado com sucesso!");
+            PersonBean person = new PersonBean(rs.getString("NAME"), rs.getString("LOGIN"), rs.getString("EMAIL"));
+            request.setAttribute("pessoa", person);
+            request.getRequestDispatcher("/Mensagem.jsp").forward(request, response);
+            }else{//login inexistente
+            request.setAttribute("mensagem", "Senha incorreta!");
+            request.getRequestDispatcher("/Login.jsp").forward(request, response);
+            }
+            
+            return;
+            }
+            request.setAttribute("mensagem", "Usuário não Cadastrado!");
+            request.getRequestDispatcher("/Login.jsp").forward(request, response);*/
+            
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -150,4 +139,18 @@ public class PesquisaServlet{ //extends HttpServlet {
             ex.printStackTrace();
         }                
     }*/
+    public List<String> getLinksToSearch(String[] palavras) {
+        List list = new ArrayList();
+        for (String palavra : palavras) {
+            if (listaInvertida.containsKey(palavra)) {
+                for (ItemListaInvertida item : listaInvertida.get(palavra)) {
+                    if (docs.contains(item.getCod())) {
+                        list.add(docs.get(docs.indexOf(item.getCod())));
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
 }
