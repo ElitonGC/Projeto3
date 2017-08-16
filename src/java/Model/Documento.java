@@ -2,7 +2,7 @@ package Model;
 
 import java.util.List;
 
-public class Documento {
+public class Documento implements Comparable<Documento>{
 	
 	private String title, link;
 	private Centroide centroide;
@@ -97,5 +97,15 @@ public class Documento {
             return super.equals(obj); //To change body of generated methods, choose Tools | Templates.
         }
     }       
-	
+
+    @Override
+    public int compareTo(Documento outroDoc) {
+     if (this.codigo > outroDoc.getCodigo()) {
+          return 1;
+     }
+     if (this.codigo < outroDoc.getCodigo()) {
+          return -1;
+     }
+     return 0;
+}
 }

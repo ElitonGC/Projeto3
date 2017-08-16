@@ -12,7 +12,6 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import Model.Documento;
-import Model.ItemListaInvertida;
 import Model.Termo;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
 
 public class Busca{
 
-    private Map<String, List<ItemListaInvertida>> listaInvertida;
+    private Map<String, List<Documento>> listaInvertida;
     private List<Documento> docs;
     
     
@@ -86,21 +85,18 @@ public class Busca{
             Logger.getLogger(Busca.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        listaInvertida = new HashMap<String, List<ItemListaInvertida>>();
+        listaInvertida = new HashMap<String, List<Documento>>();
 
-        List<ItemListaInvertida> itensListaInvertida;
+        List<Documento> itensListaInvertida;
         for(String termoBusca: termosConsulta){
             for (Documento doc : docs) {
                 for (Termo termo : doc.getCentroide().getTermos()) {
-                    if(termoBusca.equals(termo.getTermo())){
+                    if(termo.getTermo().contains(termoBusca)){
                         if (!listaInvertida.containsKey(termo.getTermo())) {
-                            listaInvertida.put(termo.getTermo(), new ArrayList<ItemListaInvertida>());
+                            listaInvertida.put(termo.getTermo(), new ArrayList<Documento>());
                     }
                     itensListaInvertida = listaInvertida.get(termo.getTermo());
-                    ItemListaInvertida item = new ItemListaInvertida();
-                    item.setCod(doc.getCodigo());
-                    item.setQdt(termo.getQuantidade());
-                    itensListaInvertida.add(item);
+                    itensListaInvertida.add(doc);
                     }             
                 }
                 System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
@@ -111,23 +107,52 @@ public class Busca{
         //Ordenar itens da lista invertida por código
         for (String chave : termosConsulta){
 			if(termosConsulta != null){
-                            List<ItemListaInvertida> itens = listaInvertida.get(chave);
+                            List<Documento> itens = listaInvertida.get(chave);
                             Collections.sort(itens);
-                                for (ItemListaInvertida item : itens){
-                                    System.out.println("Chave: "+chave + "Codigo: "+item.getCod());                      
+                                for (Documento item : itens){
+                                    System.out.println("Chave: "+chave + "Codigo: "+item.getCodigo());                      
                                 }
                         }
-		}
+        }
+        //Merge da Lista Invertida
+        mergeItens(termosConsulta);
         
-    }   
+      
+        
+    }  
+    
+    private List<Documento> mergeItens(List<String> termosConsulta){
+        
+        List<Documento> itens = new ArrayList<Documento>();
+        List<Documento> itens1 = listaInvertida.get(termosConsulta.get(0));
+        List<Documento> itens2 = listaInvertida.get(termosConsulta.get(1));
+        int i=0,j=0;
+        do{
+           if(itens1.get(i).getCodigo() == itens2.get(j).getCodigo()){
+                    itens.add(itens1.get(i));
+                    i++;
+                    j++;
+                }else if(itens1.get(i).getCodigo() > itens2.get(j).getCodigo()){
+                    j++;
+                }else if(itens1.get(i).getCodigo() < itens2.get(j).getCodigo()){
+                    i++;
+                } 
+        }while(i < itens1.size() && j < itens2.size());
+        
+        for(Documento doc: itens){
+            System.out.println("Documento codigo: " + doc.getCodigo());
+        }
+        return itens;
+    }
+    
     
     public List getLinksToSearch(List<String> palavras){
         List list = new ArrayList();
         for (String palavra : palavras) {
             if(listaInvertida.containsKey(palavra)){
-                for(ItemListaInvertida item : listaInvertida.get(palavra)){
-                    if(docs.contains(item.getCod()))
-                        list.add(docs.get(docs.indexOf(item.getCod())));
+                for(Documento item : listaInvertida.get(palavra)){
+                    if(docs.contains(item.getCodigo()))
+                        list.add(docs.get(docs.indexOf(item.getCodigo())));
                 }                
             }
         }
