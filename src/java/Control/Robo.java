@@ -16,9 +16,9 @@ public class Robo {
 
 	private XML xml = new XML();
 
-	public String getNextLink() {
+	public String getNextLink(List<String> consulta) {
 
-		return xml.getNextLink();
+		return xml.getNextLink(consulta);
 	}
 
 	public void visitedLink(String link) {

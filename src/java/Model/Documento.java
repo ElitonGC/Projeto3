@@ -84,7 +84,7 @@ public class Documento {
 
 
 	public boolean isDomain(String domain){
-		return centroide.isDomain(this.title, domain);
+		return centroide.isDomain(domain);
 	}
 
     @Override

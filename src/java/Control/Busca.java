@@ -14,15 +14,16 @@ import org.xml.sax.SAXException;
 import Model.Documento;
 import Model.ItemListaInvertida;
 import Model.Termo;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Busca implements Runnable {
+public class Busca{
 
     private Map<String, List<ItemListaInvertida>> listaInvertida;
     private List<Documento> docs;
     
-    @Override
+    
     public void run() {
         docs = new ArrayList<Documento>();
         List<String> termosConsulta = new ArrayList<String>();
@@ -54,20 +55,24 @@ public class Busca implements Runnable {
                 robo.visitedLink(doc.getLink());
 
                 validaDominio = true;
-                for (String termo : termosConsulta) {
-                    if (!doc.isDomain(termo)) {
-                        validaDominio = false;
+                if(doc.getTitle().contains(termosConsulta.get(0))){
+                    for (String termo : termosConsulta) {
+                        
+                        if (!doc.isDomain(termo)) {
+                            validaDominio = false;
+                        }
                     }
                 }
                 if (validaDominio) {
                     docs.add(doc);
                 }
             }
-            urls[0] = robo.getNextLink();
+            
+            urls[0] = robo.getNextLink(termosConsulta);
             robo.visitedLink(urls[0]);
-            urls[1] = robo.getNextLink();
+            urls[1] = robo.getNextLink(termosConsulta);
 
-        } while (docs.size() < 20);
+        } while (docs.size() <= 4);
 
         try {
             robo.indexarDocumentos(docs);
@@ -84,21 +89,37 @@ public class Busca implements Runnable {
         listaInvertida = new HashMap<String, List<ItemListaInvertida>>();
 
         List<ItemListaInvertida> itensListaInvertida;
-
-        for (Documento doc : docs) {
-            for (Termo termo : doc.getCentroide().getTermos()) {
-                if (!listaInvertida.containsKey(termo.getTermo())) {
-                    listaInvertida.put(termo.getTermo(), new ArrayList<ItemListaInvertida>());
+        for(String termoBusca: termosConsulta){
+            for (Documento doc : docs) {
+                for (Termo termo : doc.getCentroide().getTermos()) {
+                    if(termoBusca.equals(termo.getTermo())){
+                        if (!listaInvertida.containsKey(termo.getTermo())) {
+                            listaInvertida.put(termo.getTermo(), new ArrayList<ItemListaInvertida>());
+                    }
+                    itensListaInvertida = listaInvertida.get(termo.getTermo());
+                    ItemListaInvertida item = new ItemListaInvertida();
+                    item.setCod(doc.getCodigo());
+                    item.setQdt(termo.getQuantidade());
+                    itensListaInvertida.add(item);
+                    }             
                 }
-                itensListaInvertida = listaInvertida.get(termo.getTermo());
-                ItemListaInvertida item = new ItemListaInvertida();
-                item.setCod(doc.getCodigo());
-                item.setQdt(termo.getQuantidade());
-                itensListaInvertida.add(item);
+                System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
             }
-            System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
         }
-    }
+        
+        
+        //Ordenar itens da lista invertida por código
+        for (String chave : termosConsulta){
+			if(termosConsulta != null){
+                            List<ItemListaInvertida> itens = listaInvertida.get(chave);
+                            Collections.sort(itens);
+                                for (ItemListaInvertida item : itens){
+                                    System.out.println("Chave: "+chave + "Codigo: "+item.getCod());                      
+                                }
+                        }
+		}
+        
+    }   
     
     public List getLinksToSearch(List<String> palavras){
         List list = new ArrayList();

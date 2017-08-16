@@ -1,6 +1,6 @@
 package Model;
 
-public class ItemListaInvertida {
+public class ItemListaInvertida implements Comparable<ItemListaInvertida>{
 	
 	private int cod;
 	private int qdt;
@@ -18,5 +18,16 @@ public class ItemListaInvertida {
 	public void setQdt(int qdt) {
 		this.qdt = qdt;
 	}
+
+    @Override
+    public int compareTo(ItemListaInvertida outroItem) {
+        if (this.cod > outroItem.getCod()) {
+          return -1;
+     }
+     if (this.cod < outroItem.getCod()) {
+          return 1;
+     }
+     return 0;
+    }
 
 }

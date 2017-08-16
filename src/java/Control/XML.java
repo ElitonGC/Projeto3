@@ -155,7 +155,7 @@ public class XML {
 		}
 	}
 
-	public String getNextLink() {
+	public String getNextLink(List<String> consulta) {
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -164,12 +164,17 @@ public class XML {
 
 			Element root = document.getDocumentElement();
 
-			NodeList list = root.getElementsByTagName("visited");
+			NodeList list1 = root.getElementsByTagName("visited");
+                        NodeList list2 = root.getElementsByTagName("url");
+                        
 
-			for (int i = 0; i < list.getLength(); i++) {
-				if (!Boolean.valueOf(list.item(i).getTextContent())) {
-					return list.item(i).getParentNode().getFirstChild().getTextContent();
+			for (int i = 0; i < list1.getLength(); i++) {
+                            for(String termo: consulta){
+                               
+                                if (!Boolean.valueOf(list1.item(i).getTextContent()) && list2.item(i).getTextContent().contains(termo)) {
+					return list1.item(i).getParentNode().getFirstChild().getTextContent();
 				}
+                            }
 			}
 		} catch (Exception e) {
 			System.out.println("Erro: " + e.getMessage());

@@ -17,7 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletConfig;
+/*import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,13 +29,13 @@ import javax.servlet.http.HttpServletResponse;
  * @author aluno
  */
 
-@WebServlet(urlPatterns = {"/PesquisaServlet"})
-public class PesquisaServlet extends HttpServlet {
+//@WebServlet(urlPatterns = {"/PesquisaServlet"})
+public class PesquisaServlet{ //extends HttpServlet {
     
     private Busca busca;
     //private Connection conn;
     //private Statement stmt;
-        
+   /*     
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -57,7 +57,7 @@ public class PesquisaServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e);
         }*/
-    }
+    //}
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,6 +68,7 @@ public class PesquisaServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    /*
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException{
         response.setContentType("text/html;charset=UTF-8");
         
@@ -99,7 +100,7 @@ public class PesquisaServlet extends HttpServlet {
             }
             
         }*/
-    }
+   // }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -110,7 +111,7 @@ public class PesquisaServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+   /* @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
@@ -124,7 +125,7 @@ public class PesquisaServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+    /*@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
@@ -135,7 +136,7 @@ public class PesquisaServlet extends HttpServlet {
      *
      * @return a String containing servlet description
      */
-    @Override
+   /* @Override
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>

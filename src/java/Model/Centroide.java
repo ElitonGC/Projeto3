@@ -88,10 +88,10 @@ public class Centroide {
 		}
 	}
 	
-	public boolean isDomain(String title, String domain) {
+	public boolean isDomain(String domain) {
 		for(int i = 0; i < termos.size();i++){
 			Termo t = termos.get(i);
-			if(t.getTermo().equals(domain) && domain.contains(title)){
+			if(t.getTermo().contains(domain)){
 				return true;
 			}
 		}

@@ -47,7 +47,7 @@ public class Parser implements Runnable {
 			// System.setProperty("http.proxyPort", "3128");
 			Document doc = Jsoup.connect(link).get();
 			Elements titulo = doc.select("title");
-			this.title = titulo.text();
+			this.title = padronizarConteudo(titulo.text());
 
 			Queue<Node> nodes = new ArrayDeque<>();
 
