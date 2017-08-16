@@ -1,6 +1,5 @@
 package Model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Documento {
@@ -85,7 +84,7 @@ public class Documento {
 
 
 	public boolean isDomain(String domain){
-		return centroide.isDomain(domain);
+		return centroide.isDomain(this.title, domain);
 	}
 
     @Override
