@@ -69,7 +69,7 @@ public class Documento implements Serializable {
     }
 
     public boolean isDomain(String domain) {
-        return centroide.isDomain(domain);
+        return centroide.isDomain(this.title, domain);
     }
 
     @Override
