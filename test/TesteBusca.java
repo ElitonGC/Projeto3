@@ -16,7 +16,7 @@ import Control.Busca;
 public class TesteBusca {
     public static void main(String []args){
         Busca busca = new Busca();
-        busca.run();
+        busca.executar();
         
 }
 }

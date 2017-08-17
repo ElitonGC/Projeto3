@@ -12,11 +12,8 @@
         <title>Login</title>
     </head>
     <body>
-        <c:if test = "true">
-            ${mensagem}
-        </c:if>
         <form action="PesquisaServlet" method="GET">      
-            Pesquisa: <input type="text" name="Campos" /><br>
+            Pesquisa: <input type="text" name="pesquisa" /><br>
             <input type="submit" value="Pesquisar" />
         </form>                
     </body>

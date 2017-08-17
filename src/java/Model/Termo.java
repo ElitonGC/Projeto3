@@ -7,6 +7,12 @@ public class Termo implements Serializable {
     private String termo;
     private int peso;
     private int quantidade;
+    
+    public Termo(){
+        termo = "";
+        peso = 0;
+        quantidade = 0;
+    }
 
     public String getTermo() {
         return termo;

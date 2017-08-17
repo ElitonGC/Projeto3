@@ -11,10 +11,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
-    <body>        
-        <h1>Parabéns <b>${pessoa.nome}</b>!</h1> <br>
-        Você acaba de logar no sistema. <br>
-        O seu login é '${pessoa.login}' e o seu e-mail é '${pessoa.email}' <br>
-        Hoje é Fri Jul 07 08:03:14 BRT 2017
-    </body>
+    <body>
+    <c:forEach items="${respostas}" var="resp">
+        <a href="${resp.link}">${resp.titulo}</a><br>
+        ${resp.texto}
+    </c:forEach>
+</body>
 </html>

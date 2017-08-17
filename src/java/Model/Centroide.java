@@ -105,8 +105,7 @@ public class Centroide implements Serializable {
                 return t;
             }
         }
-
-        return null;
+        return new Termo();
     }
 
 }

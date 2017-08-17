@@ -20,7 +20,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
-public class Parser implements Runnable {
+public class Parser {
 
 	private String link;
 
@@ -177,7 +177,6 @@ public class Parser implements Runnable {
 		return seeds;
 	}
 
-	@Override
 	public void run() {
 		try {
 			parserPagina();
