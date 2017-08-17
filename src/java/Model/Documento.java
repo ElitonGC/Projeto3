@@ -1,6 +1,7 @@
 package Model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Documento implements Serializable, Comparable<Documento> {
@@ -12,13 +13,13 @@ public class Documento implements Serializable, Comparable<Documento> {
 	private int qtdTermos = 0;
 	private List<Seed> seeds;
 	private int codigo;
-	
-	
 
     public void setCodigo(int codigo) {
         this.codigo = codigo;
     }
+        
 
+    
     public int getCodigo() {
         return codigo;
     }
@@ -72,7 +73,7 @@ public class Documento implements Serializable, Comparable<Documento> {
     }
 
     public boolean isDomain(String domain) {
-        return centroide.isDomain(this.title, domain);
+        return centroide.isDomain(domain);
     }
 
 	
@@ -97,5 +98,33 @@ public class Documento implements Serializable, Comparable<Documento> {
           return -1;
      }
      return 0;
+    }
+    
+    public double calcularScore(List<String> termosConsulta, int N, int ft){
+        List<Double> list_wdt = new ArrayList<Double>(), list_wqt = new ArrayList<Double>();
+        double wdt, wqt, Wd, Sd = 0;
+        for(String termo: termosConsulta){
+           wdt = calcularWDT(termo);
+           list_wdt.add(wdt);
+           wqt = Math.log(1 + (N/ft));
+           list_wqt.add(wqt);
+           Sd += wdt*wqt;
+        }
+        Wd = calcularWd(list_wdt);
+        
+        return Sd/Wd;
+    }
+
+    private double calcularWDT(String termo) {
+        Termo t = centroide.getTermoValue(termo);
+        return 1 + (Math.log(t.getQuantidade()));
+    }
+
+    private double calcularWd(List<Double> list_wdt) {
+        double soma_Wd = 0;
+        for(double wdt: list_wdt){
+            soma_Wd += Math.pow(wdt,2);;
+        }
+        return Math.sqrt(soma_Wd);
     }
 }

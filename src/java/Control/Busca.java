@@ -73,6 +73,35 @@ public class Busca{
 
         } while (docs.size() <= 4);
 
+        //IndexarDocumentos
+        indexarDocumentos(robo);
+
+        //Gerar Lista Invertida
+        gerarListaInvertida(termosConsulta);
+        
+        //Ordenar itens da lista invertida por código
+        ordenarItensListaInvertida(termosConsulta);
+        
+        //Merge da Lista Invertida
+        List<Documento> documentos = mergeItens(termosConsulta);
+        
+        List<ResultadoBusca> resultBusca = new ArrayList<ResultadoBusca>();
+        for(Documento doc: documentos){
+            ResultadoBusca rs = new ResultadoBusca();
+            rs.setDocumento(doc);
+            rs.setScore(doc.calcularScore(termosConsulta, documentos.size(), documentos.size()));
+            resultBusca.add(rs);
+        }
+        
+        Collections.sort(resultBusca);
+        
+        for(ResultadoBusca rs: resultBusca){
+            System.out.println("Documento codigo: " + rs.getDocumento().getCodigo() + "Score: " +rs.getScore());
+        }
+      
+        
+    } 
+    private void indexarDocumentos(Robo robo){
         try {
             robo.indexarDocumentos(docs);
         } catch (SAXException ex) {
@@ -84,42 +113,38 @@ public class Busca{
         } catch (TransformerException ex) {
             Logger.getLogger(Busca.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        listaInvertida = new HashMap<String, List<Documento>>();
+    }
+    private void gerarListaInvertida(List<String> termosConsulta){
+    listaInvertida = new HashMap<String, List<Documento>>();
 
         List<Documento> itensListaInvertida;
         for(String termoBusca: termosConsulta){
             for (Documento doc : docs) {
                 for (Termo termo : doc.getCentroide().getTermos()) {
-                    if(termo.getTermo().contains(termoBusca)){
-                        if (!listaInvertida.containsKey(termo.getTermo())) {
-                            listaInvertida.put(termo.getTermo(), new ArrayList<Documento>());
+                    if(termo.getTermo().equals(termoBusca)){
+                        if (!listaInvertida.containsKey(termoBusca)) {
+                            listaInvertida.put(termoBusca, new ArrayList<Documento>());
                     }
-                    itensListaInvertida = listaInvertida.get(termo.getTermo());
+                    itensListaInvertida = listaInvertida.get(termoBusca);
                     itensListaInvertida.add(doc);
+                    System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
                     }             
                 }
-                System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
+                
             }
         }
-        
-        
-        //Ordenar itens da lista invertida por código
+}
+    private void ordenarItensListaInvertida(List<String> termosConsulta){
         for (String chave : termosConsulta){
 			if(termosConsulta != null){
                             List<Documento> itens = listaInvertida.get(chave);
                             Collections.sort(itens);
-                                for (Documento item : itens){
-                                    System.out.println("Chave: "+chave + "Codigo: "+item.getCodigo());                      
+                                for(Documento item : itens){
+                                    System.out.println("Chave: "+chave + " Codigo: "+item.getCodigo());                      
                                 }
                         }
         }
-        //Merge da Lista Invertida
-        mergeItens(termosConsulta);
-        
-      
-        
-    }  
+    }
     
     private List<Documento> mergeItens(List<String> termosConsulta){
         
