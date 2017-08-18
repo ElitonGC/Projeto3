@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +32,7 @@ public class PesquisaServlet extends HttpServlet {
 
     private Map<String, List<ItemListaInvertida>> listaInvertida;
     private List<Documento> docs;
-    private List<Documento> documentos;
+    //private List<Documento> documentos;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -48,9 +47,9 @@ public class PesquisaServlet extends HttpServlet {
             docs = (List<Documento>) in.readObject();
             in.close();
 
-            in = new ObjectInputStream(new FileInputStream(new File("C:\\Testes\\documentosBusca.dat")));
-            documentos = (List<Documento>) in.readObject();
-            in.close();
+            //in = new ObjectInputStream(new FileInputStream(new File("C:\\Testes\\documentosBusca.dat")));
+            //documentos = (List<Documento>) in.readObject();
+            //in.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ClassNotFoundException ex) {
@@ -69,25 +68,52 @@ public class PesquisaServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try {
             String[] parts = request.getParameter("pesquisa").split(" ");
-            List<ResultadoBusca> resultBusca = new ArrayList<ResultadoBusca>();
-            for (Documento doc : documentos) {
-                ResultadoBusca rs = new ResultadoBusca();
-                rs.setDocumento(doc);
-                rs.setScore(doc.calcularScore(Arrays.asList(parts), documentos.size(), documentos.size()));
-                resultBusca.add(rs);
+
+            List<String> palavras = Arrays.asList(parts);
+            List<Documento> list = new ArrayList<Documento>();
+            for (String palavra : palavras) {
+                if (listaInvertida.containsKey(palavra)) {
+                    for (ItemListaInvertida item : listaInvertida.get(palavra)) {
+                        if (docs.contains(item.getCod())) {
+                            list.add(docs.get(docs.indexOf(item.getCod())));
+                        }
+                    }
+                }
             }
-            Collections.sort(resultBusca);
+            
+            Collections.sort(list);
+            
             List<SearchBean> beans = new ArrayList<SearchBean>();
-            for (ResultadoBusca rs : resultBusca) {
-                SearchBean search = new SearchBean(rs.getDocumento().getLink(), rs.getDocumento().getTitle(), rs.getDocumento().getTitle());
+            for (Documento doc : list) {
+                SearchBean search = new SearchBean(doc.getLink(), doc.getTitle(), doc.getTitle());
                 beans.add(search);
             }
-            request.setAttribute("respostas", beans);
-            request.getRequestDispatcher("/resultado.jsp").forward(request, response);
-            response.sendRedirect("/resultado.jsp");
-            System.out.println("1");
+
+            /*List<ResultadoBusca> resultBusca = new ArrayList<ResultadoBusca>();
+            for (Documento doc : docs) {
+                ResultadoBusca rs = new ResultadoBusca();
+                rs.setDocumento(doc);
+                rs.setScore(doc.calcularScore(Arrays.asList(parts), docs.size(), docs.size()));
+                resultBusca.add(rs);
+            }
+            Collections.sort(resultBusca);*/
+            
+
+            if (beans.isEmpty()) {//cadastro com sucesso
+                request.setAttribute("mensagem", "Não foram encontradas paginas relacionadas!");
+                request.getRequestDispatcher("/pesquisa.jsp").forward(request, response);
+            } else {
+                if (response.isCommitted()) {
+                    System.out.println("Servlet.PesquisaServlet.processRequest()");
+                    response.flushBuffer();
+                }
+                //request.setAttribute("mensagem", "");
+                request.setAttribute("respostas", beans);
+                request.getRequestDispatcher("/pesquisa.jsp").forward(request, response);
+
+            }
             /*while(rs.next()){
             if (rs.getString("PASSWORD").equals(request.getParameter("password"))) {//cadastro com sucesso
             request.setAttribute("mensagem", "Login realizado com sucesso!");
@@ -103,7 +129,9 @@ public class PesquisaServlet extends HttpServlet {
             }
             request.setAttribute("mensagem", "Usuário não Cadastrado!");
             request.getRequestDispatcher("/Login.jsp").forward(request, response);*/
-        } catch (ServletException | IOException ex) {
+        } catch (IOException ex) {
+            Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServletException ex) {
             Logger.getLogger(PesquisaServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

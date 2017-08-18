@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import Model.Documento;
+import Model.ItemListaInvertida;
 import Model.Termo;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,9 +23,9 @@ import java.util.logging.Logger;
 
 public class Busca {
 
-    private Map<String, List<Documento>> listaInvertida;
+    private Map<String, List<ItemListaInvertida>> listaInvertida;
     private List<Documento> docs;
-    private List<Documento> documentos;
+    //private List<Documento> documentos;
 
     public void executar() {
         docs = new ArrayList<Documento>();
@@ -54,6 +55,7 @@ public class Busca {
                 doc.setQtdTermosDiferentes(parser.getQtdTermosDiferentes());
                 doc.setSeeds(parser.getLinksUrl(parser.getLink()));
                 doc.setTitle(parser.getTitle());
+                doc.setCodigo(docs.size() + 1);
 
                 robo.addLinks(doc.getSeeds());
                 robo.visitedLink(doc.getLink());
@@ -61,7 +63,6 @@ public class Busca {
                 validaDominio = true;
                 if (doc.getTitle().contains(termosConsulta.get(0))) {
                     for (String termo : termosConsulta) {
-
                         if (!doc.isDomain(termo)) {
                             validaDominio = false;
                         }
@@ -70,8 +71,13 @@ public class Busca {
                 if (validaDominio) {
                     docs.add(doc);
 
-                    //IndexarDocumentos
-                    indexarDocumentos(robo);
+                    try {
+                        //IndexarDocumentos
+                        //indexarDocumentos(robo);
+                        robo.indexarDocumentos(docs);
+                    } catch (IOException | ParserConfigurationException | TransformerException | SAXException ex) {
+                        Logger.getLogger(Busca.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                     //Gerar Lista Invertida
                     gerarListaInvertida(termosConsulta);
@@ -80,8 +86,7 @@ public class Busca {
                     ordenarItensListaInvertida(termosConsulta);
 
                     //Merge da Lista Invertida
-                    documentos = mergeItens(termosConsulta);
-
+                    //documentos = mergeItens(termosConsulta);
                     try {
                         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
                                 new File("C:\\Testes\\listaInvertida.dat")));
@@ -94,10 +99,10 @@ public class Busca {
                         out.flush();
                         out.close();
 
-                        out = new ObjectOutputStream(new FileOutputStream(new File("C:\\Testes\\documentosBusca.dat")));
-                        out.writeObject(documentos);
-                        out.flush();
-                        out.close();
+                        //out = new ObjectOutputStream(new FileOutputStream(new File("C:\\Testes\\documentosBusca.dat")));
+                        //ut.writeObject(documentos);
+                        //out.flush();
+                        //out.close();
                     } catch (IOException ex) {
                         Logger.getLogger(Busca.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -126,69 +131,42 @@ public class Busca {
     }
 
     private void gerarListaInvertida(List<String> termosConsulta) {
-        listaInvertida = new HashMap<String, List<Documento>>();
+        listaInvertida = new HashMap<String, List<ItemListaInvertida>>();
 
-        List<Documento> itensListaInvertida;
-        for (String termoBusca : termosConsulta) {
-            for (Documento doc : docs) {
-                for (Termo termo : doc.getCentroide().getTermos()) {
-                    if (termo.getTermo().equals(termoBusca)) {
-                        if (!listaInvertida.containsKey(termoBusca)) {
-                            listaInvertida.put(termoBusca, new ArrayList<Documento>());
-                        }
-                        itensListaInvertida = listaInvertida.get(termoBusca);
-                        itensListaInvertida.add(doc);
-                        System.out.println("Documento " + doc.getCodigo() + " esta no Dominio");
-                    }
+        List<ItemListaInvertida> itensListaInvertida;
+
+        for (Documento doc : docs) {
+            for (Termo termo : doc.getCentroide().getTermos()) {
+                if (!listaInvertida.containsKey(termo.getTermo())) {
+                    listaInvertida.put(termo.getTermo(), new ArrayList<ItemListaInvertida>());
                 }
+                itensListaInvertida = listaInvertida.get(termo.getTermo());
+                ItemListaInvertida item = new ItemListaInvertida();
+                item.setCod(doc.getCodigo());
+                item.setQdt(termo.getQuantidade());
+                itensListaInvertida.add(item);
 
             }
+
         }
     }
 
     private void ordenarItensListaInvertida(List<String> termosConsulta) {
         for (String chave : termosConsulta) {
             if (termosConsulta != null) {
-                List<Documento> itens = listaInvertida.get(chave);
+                List<ItemListaInvertida> itens = listaInvertida.get(chave);
                 Collections.sort(itens);
-                for (Documento item : itens) {
-                    System.out.println("Chave: " + chave + " Codigo: " + item.getCodigo());
-                }
             }
         }
-    }
-
-    private List<Documento> mergeItens(List<String> termosConsulta) {
-
-        List<Documento> itens = new ArrayList<Documento>();
-        List<Documento> itens1 = listaInvertida.get(termosConsulta.get(0));
-        List<Documento> itens2 = listaInvertida.get(termosConsulta.get(1));
-        int i = 0, j = 0;
-        do {
-            if (itens1.get(i).getCodigo() == itens2.get(j).getCodigo()) {
-                itens.add(itens1.get(i));
-                i++;
-                j++;
-            } else if (itens1.get(i).getCodigo() > itens2.get(j).getCodigo()) {
-                j++;
-            } else if (itens1.get(i).getCodigo() < itens2.get(j).getCodigo()) {
-                i++;
-            }
-        } while (i < itens1.size() && j < itens2.size());
-
-        for (Documento doc : itens) {
-            System.out.println("Documento codigo: " + doc.getCodigo());
-        }
-        return itens;
     }
 
     public List getLinksToSearch(List<String> palavras) {
         List list = new ArrayList();
         for (String palavra : palavras) {
             if (listaInvertida.containsKey(palavra)) {
-                for (Documento item : listaInvertida.get(palavra)) {
-                    if (docs.contains(item.getCodigo())) {
-                        list.add(docs.get(docs.indexOf(item.getCodigo())));
+                for (ItemListaInvertida item : listaInvertida.get(palavra)) {
+                    if (docs.contains(item.getCod())) {
+                        list.add(docs.get(docs.indexOf(item.getCod())));
                     }
                 }
             }
